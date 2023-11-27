@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/hashbrwn/tinyapp/issues"
   },
-  "homepage": "https://github.com/hashbrwn/tinyapp#readme"
+  "homepage": "https://github.com/hashbrwn/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
