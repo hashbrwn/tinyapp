@@ -32,7 +32,7 @@ const urlDatabase = {
 };
 
 // const users = {};
-const testUsers = {
+const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
@@ -81,7 +81,7 @@ app.get('/users.json', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  if (req.session.userID) {
+  if (req.session.user_id ) {
     res.redirect('/urls');
   } else {
     res.redirect('/login');
@@ -134,6 +134,9 @@ app.get("/urls/:id", (req, res) => {
 });
 
 
+
+
+
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   if (id === undefined) {
@@ -150,7 +153,7 @@ app.get("/register", (req, res) => {
     return;
   }
   const templateVars = { user: null};
-  res.render("urls_register", templateVars);
+  res.render("register", templateVars);
 });
 
 app.get("/login", (req, res) => {
