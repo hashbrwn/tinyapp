@@ -18,32 +18,12 @@ app.use(function(req, res, next) {
 
 
 
+// Importing urlDatabase and users from the helpers.js file
+const { urlDatabase, users } = require("./helpers");
+app.get("/users", (req, res) => {
+  res.json(users);
+});
 
-// const urlDatabase = {};
-const urlDatabase = {
-  b6UTxQ: {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "aJ48lW",
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "aJ48lW",
-  },
-};
-
-// const users = {};
-const users = {
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
-  "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
-};
 
 
 // --- functions
@@ -127,6 +107,7 @@ app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const templateVars = {
     id: req.params.id,
+    shortURL: req.params.id,
     longURL: urlDatabase[id].longURL,
     user: req.session.user_id
   };
@@ -148,7 +129,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  if (req.session.user_id !== undefined) {
+  if (req.session.user_id) {
     res.redirect("/urls");
     return;
   }
@@ -157,7 +138,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  if (req.session.user_id !== undefined) {
+  if (req.session.user_id ) {
     res.redirect("/urls");
     return;
   }
@@ -175,7 +156,7 @@ app.post(`/urls`, (req, res) => {
     longURL: req.body.longURL,
     userID: req.session.user_id
   };
-  res.redirect(`urls/${random}`);
+  res.redirect(`/urls/${random}`);
 });
 
 
@@ -216,8 +197,9 @@ app.post("/login", (req, res) => {
 
 // Logout
 app.post("/logout", (req, res) => {
-  res.clearCookie('session');
-  res.clearCookie('session.sig');
+  // res.clearCookie('session');
+  // res.clearCookie('session.sig');
+  req.session = null; 
   res.redirect('/login');
 });
 

@@ -21,8 +21,37 @@ const urlsForUser = function(userId, urldatabase) {
   return userUrls;
 }
 
+
+// const urlDatabase = {};
+const urlDatabase = {
+  b6UTxQ: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
+};
+
+// const users = {};
+const users = {
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
 module.exports = {
   generateRandomString,
   getUserByEmail,
-  urlsForUser
+  urlsForUser,
+  urlDatabase,
+  users,
 }
