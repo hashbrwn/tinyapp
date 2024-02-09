@@ -11,25 +11,16 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
-app.use(function(req, res, next) {
-  res.locals.user_id = req.session.user_id || false;
-  next();
-});
 
 
-
-// Importing urlDatabase and users from the helpers.js file
-const { urlDatabase, users } = require("./helpers");
-app.get("/users", (req, res) => {
-  res.json(users);
-});
 
 
 
 // --- functions
-
-
-const { getUserByEmail } = require('./helpers');
+const { urlDatabase, getUserByEmail, users } = require("./helpers");
+app.get("/users", (req, res) => {
+  res.json(users);
+});
 
 function generateRandomString() {
   let random = Math.random().toString(36).substr(2, 6);
@@ -96,22 +87,24 @@ app.get("/urls/new", (req, res) => {
   if (req.session.user_id) {
     let templateVars = {user: users[req.session.user_id]};
     res.render("urls_new", templateVars);
+    return;
   }
   res.redirect("/login");
-  return;
+  
 });
 
 
 //Short URL
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
+  if (urlDatabase[id]) {
   const templateVars = {
     id: req.params.id,
     shortURL: req.params.id,
     longURL: urlDatabase[id].longURL,
-    user: req.session.user_id
-  };
+    user: users[req.session.user_id]};
   res.render("urls_show", templateVars);
+  } else{ return res.send('403 - URL does not exist');}
 });
 
 
@@ -171,8 +164,16 @@ app.post('/urls/:id/delete', (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const longURL = req.body.longURL;
-  urlDatabase[id].longURL = longURL;
-  res.redirect('/urls');
+  if (req.session === null) {
+    res.send('not logged in');
+    return; 
+  }
+if (req.session.user_id === urlDatabase[id].userID) {
+  urlDatabase[id].longURL = longURL; 
+  res.redirect('/urls'); }
+  else {res.send('error you are not the owner of url')
+}
+
 });
 
 
@@ -180,7 +181,8 @@ app.post("/urls/:id", (req, res) => {
 // Login
 app.post("/login", (req, res) => {
   let user = getUserByEmail(req.body.email, users);
-  if (user !== undefined) {
+  console.log(user);
+  if (user) {
     if (bcrypt.compareSync(req.body.password, user.password)) {
       req.session.user_id = user.id;
       return res.redirect('/urls');
