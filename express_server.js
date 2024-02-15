@@ -97,15 +97,26 @@ app.get("/urls/new", (req, res) => {
 //Short URL
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
-  if (urlDatabase[id]) {
-  const templateVars = {
+  if (!urlDatabase[id]) {
+
+    return res.status(403).send('URL does not exist');
+  }
+
+  if (!req.session.user_id) {
+    return res.status(403).send('You must be logged in to view this URL');
+  }
+
+  if (urlDatabase[id].userID !== req.session.user_id) {
+    return res.status(403).send('You do not have permission to view this URL');
+  }
+    const templateVars = {
     id: req.params.id,
     shortURL: req.params.id,
     longURL: urlDatabase[id].longURL,
     user: users[req.session.user_id]};
-  res.render("urls_show", templateVars);
-  } else{ return res.send('403 - URL does not exist');}
-});
+
+    res.render("urls_show", templateVars);
+  });
 
 
 
